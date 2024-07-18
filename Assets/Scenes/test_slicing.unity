@@ -406,7 +406,7 @@ GameObject:
   - component: {fileID: 1550034802}
   - component: {fileID: 1550034804}
   m_Layer: 0
-  m_Name: orang
+  m_Name: banana
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -453,7 +453,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 10911, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 9909fde76e63120499d04ff02941e71c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -474,7 +474,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 30.38, y: 30.38, z: 30.38}
+  m_LocalScale: {x: 0.7438252, y: 0.7438252, z: 0.7438252}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -492,9 +492,9 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_LinearDrag: 1
+  m_AngularDrag: 0.5
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -522,6 +522,7 @@ MonoBehaviour:
   polyCollider: {fileID: 1550034804}
   render: {fileID: 1550034796}
   visibleVector: {x: 0, y: 1}
+  text: {fileID: 0}
   textPrefab: {fileID: 4138840220854281669, guid: 4d6283ae595759045b561fba71c54a1a, type: 3}
   unit: 0
   minPointX: 3.4028235e+38
@@ -560,9 +561,9 @@ PolygonCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
-    border: {x: 0.049999997, y: 0.049999997, z: 0.049999997, w: 0.049999997}
+    border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.16, y: 0.16}
+    oldSize: {x: 9.46, y: 5.7}
     newSize: {x: 0.16, y: 0.16}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -570,12 +571,36 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -0.08, y: 0.08}
-      - {x: -0.08, y: -0.08}
-      - {x: 0.074999996, y: -0.08}
-      - {x: 0.08, y: -0.06}
-      - {x: 0.08, y: 0.07}
-      - {x: 0.055, y: 0.08}
+    - - {x: -0.63500005, y: -2.7649999}
+      - {x: 1.425, y: -2.5849998}
+      - {x: 3.2350001, y: -2.0149999}
+      - {x: 3.6450002, y: -1.7349999}
+      - {x: 4.205, y: -1.0949999}
+      - {x: 4.625, y: -0.42499998}
+      - {x: 4.585, y: 0.005}
+      - {x: 4.305, y: 0.185}
+      - {x: 3.7450001, y: 0.15499999}
+      - {x: 1.315, y: -0.46499997}
+      - {x: 0.625, y: -0.545}
+      - {x: -0.625, y: -0.545}
+      - {x: -0.97499996, y: -0.445}
+      - {x: -1.4350001, y: -0.24499999}
+      - {x: -2.6850002, y: 0.66499996}
+      - {x: -3.6850002, y: 1.2149999}
+      - {x: -3.9350002, y: 1.8249999}
+      - {x: -3.975, y: 2.3249998}
+      - {x: -4.195, y: 2.6349998}
+      - {x: -4.485, y: 2.745}
+      - {x: -4.615, y: 2.475}
+      - {x: -4.645, y: 2.0949998}
+      - {x: -4.415, y: 1.2049999}
+      - {x: -4.485, y: -0.035}
+      - {x: -4.325, y: -0.655}
+      - {x: -4.035, y: -1.2049999}
+      - {x: -3.4950001, y: -1.775}
+      - {x: -2.835, y: -2.235}
+      - {x: -1.695, y: -2.615}
+      - {x: -0.64500004, y: -2.7549999}
   m_UseDelaunayMesh: 0
 --- !u!1 &1567323900
 GameObject:
@@ -621,9 +646,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff163b9e6000c994d81f28beb8c6a6e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ingredient: {fileID: 0}
-  debug: 0
-  debug_val: 0.5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
