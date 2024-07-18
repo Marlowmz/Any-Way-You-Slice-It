@@ -58,6 +58,7 @@ public class SimpleMouse : MonoBehaviour
             DropHeld();
         }
 
+
         if(draggedObject != null){
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
