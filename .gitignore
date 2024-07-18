@@ -77,3 +77,4 @@ ProjectSettings/BurstAotSettings_Android.json
 .vsconfig
 ProjectSettings/Packages/com.unity.testtools.codecoverage/Settings.json
 ProjectSettings/Packages/com.unity.learn.iet-framework/Settings.json
+/.vscode
