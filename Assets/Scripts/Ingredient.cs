@@ -11,14 +11,13 @@ public class Ingredient : MonoBehaviour
 
     public Vector2 visibleVector = new Vector2(0, 1);
 
-    TextMeshPro text;
+    public TextMeshPro text;
     public GameObject textPrefab;
     public float unit;
     public float minPointX = float.MaxValue;
     public float maxPointX = float.MinValue;
 
     private void Awake() {
-
         Vector2[] points = polyCollider.GetPath(0);
         for (int i = 0; i < points.Length; i++)
         {
@@ -32,8 +31,6 @@ public class Ingredient : MonoBehaviour
             }
         }
 
-        // why is this necessary?
-        text = GetComponentInChildren<TextMeshPro>();
         if (text) return;
         Debug.Log("Creating text for " + gameObject.name);
         text = Instantiate(textPrefab).GetComponent<TextMeshPro>();
@@ -45,18 +42,16 @@ public class Ingredient : MonoBehaviour
         // only here because it makes debug easier
         text.gameObject.transform.position = transform.position + new Vector3(0, render.bounds.extents.y, 0);
         text.transform.SetParent(gameObject.transform);
-        
-        text.margin = new Vector4(render.bounds.size.x / 2, 0, render.bounds.size.x / 2, 0); 
-        // this is wrong because positive margin decreases text width
+        RefreshText();
     }
 
     public void RefreshText() {
-        // why is this necessary?
-        text = GetComponentInChildren<TextMeshPro>();
         text.text = gameObject.name;
-        text.gameObject.transform.position = transform.position + new Vector3(0, render.bounds.extents.y, 0);
+        float offset = (visibleVector.y - (1.0f-visibleVector.x));
+        text.rectTransform.sizeDelta = new Vector2(render.bounds.size.x*Mathf.Abs(visibleVector.y - visibleVector.x), text.rectTransform.sizeDelta.y);
+        text.gameObject.transform.position = transform.position + new Vector3(render.bounds.extents.x*offset, render.bounds.extents.y, 0);
         // adjust margin to new visiblevector
-        text.margin = new Vector4(visibleVector.x, 0, 1.0f-visibleVector.y, 0)*render.bounds.size.x*5.0f;
+        // text.margin = new Vector4(visibleVector.x, 0, 1.0f-visibleVector.y, 0)*render.bounds.size.x*4.0f;
     }
 
     private void Update() {
