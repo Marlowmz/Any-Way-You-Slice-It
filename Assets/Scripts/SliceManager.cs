@@ -6,7 +6,11 @@ using TMPro;
 using System;
 
 public class SliceManager : MonoBehaviour
-{
+{   
+    [SerializeField]
+    SpriteRenderer preview_sprite;
+    Ingredient hovered_ingredient;
+
     void SlicePoly(Ingredient ing, float min, float max)
     {
         // get renderer bounds
@@ -65,19 +69,22 @@ public class SliceManager : MonoBehaviour
         mat.SetVector("_VisibleVector", new Vector4(min, max, 0, 0));
     }
 
-    void Slice( Ingredient i, float sliceAt) {
+    float GetSlicePosition(Ingredient i, float sliceAt) {
         // round slice at to a character position
         // this math is definitely rounding wrong
         if (i.unit == 0) {
             i.unit = Mathf.Abs(i.visibleVector.y - i.visibleVector.x) / i.name.Length;
-            return;
         }
         float unit = i.unit;
         // round sliceAt to the nearest unit
         int characterPosition = Mathf.RoundToInt(sliceAt / unit);
         sliceAt = characterPosition * unit;
-        Debug.Log("Slice at: " + sliceAt);
-        Debug.Log("Character position: " + characterPosition);
+        return sliceAt;
+    }
+
+
+    void Slice(Ingredient i, float sliceAt) {
+        sliceAt = GetSlicePosition(i, sliceAt);
 
         // if sliceat is not within ingredient visible bounds, error
         if (sliceAt <= i.visibleVector.x || sliceAt >= i.visibleVector.y)
@@ -89,7 +96,7 @@ public class SliceManager : MonoBehaviour
         // duplicate the ingredient
         Ingredient newIngredient = Instantiate(i.gameObject).GetComponent<Ingredient>();
         newIngredient.name = i.name;
-        int trueCharacterPosition = Mathf.RoundToInt((sliceAt-i.visibleVector.x) / unit);
+        int trueCharacterPosition = Mathf.RoundToInt((sliceAt-i.visibleVector.x) / i.unit);
 
         i.visibleVector.x = sliceAt;
         newIngredient.visibleVector.y = sliceAt;
@@ -108,13 +115,13 @@ public class SliceManager : MonoBehaviour
     }
 
     private void Update() {
-        if (Input.GetMouseButtonDown(1))
-        {
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
+        RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
 
-            RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
-            if (hit.collider != null)
+        if (hit.collider != null)
+        {
+            if (Input.GetMouseButtonDown(1))
             {
                 Ingredient found_ingredient = hit.collider.GetComponent<Ingredient>();
                 if (found_ingredient != null) {
@@ -125,6 +132,23 @@ public class SliceManager : MonoBehaviour
                     }
                 }
             }
-        }
+            else if (hit.transform.tag == "Ingredient")
+            {
+                if (!hovered_ingredient) {
+                    hovered_ingredient = hit.collider.GetComponent<Ingredient>();
+                }
+                else {
+                    preview_sprite.transform.position = Vector3.Lerp(preview_sprite.transform.position, mousePos, 0.1f);
+                    preview_sprite.gameObject.SetActive(true);
+                }
+            }
+        }     
+        else {
+            hovered_ingredient = null;
+            preview_sprite.gameObject.SetActive(false);
+        }  
     }
+
+
+
 }
