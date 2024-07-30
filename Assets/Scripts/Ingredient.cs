@@ -60,10 +60,12 @@ public class Ingredient : MonoBehaviour
 
     public void RefreshText() {
         text.text = gameObject.name;
-        float offset = (visibleVector.y - (1.0f-visibleVector.x));
         text.rectTransform.sizeDelta = new Vector2(render.bounds.size.x*Mathf.Abs(visibleVector.y - visibleVector.x), text.rectTransform.sizeDelta.y);
         float maxPointYWorld = transform.lossyScale.y * maxPointY;
-        text.gameObject.transform.position = transform.position + transform.up * maxPointYWorld + new Vector3(render.bounds.extents.x*offset, render.bounds.extents.y, 0);
+        // using visible vector, find center of visible part
+        float center = visibleVector.x + (visibleVector.y - visibleVector.x) / 2.0f;
+        float centerLocal = Mathf.Lerp(minPointX, maxPointX, center);
+        text.gameObject.transform.position = transform.TransformPoint(new Vector3(centerLocal, 0, 0)) + Vector3.up * (maxPointYWorld+0.5f);;
         UpdateMaxY();
     }
 
@@ -72,9 +74,11 @@ public class Ingredient : MonoBehaviour
         float alpha_lerp = Time.deltaTime * 5.0f;
 
         if (showText) {
-            float offset = (visibleVector.y - (1.0f-visibleVector.x));
             float maxPointYWorld = transform.lossyScale.y * maxPointY;
-            Vector3 target_pos = transform.position + transform.up * maxPointYWorld + new Vector3(render.bounds.extents.x*offset, render.bounds.extents.y, 0);
+            // using visible vector, find center of visible part
+            float center = visibleVector.x + (visibleVector.y - visibleVector.x) / 2.0f;
+            float centerLocal = Mathf.Lerp(minPointX, maxPointX, center);
+            Vector3 target_pos = transform.TransformPoint(new Vector3(centerLocal, 0, 0)) + Vector3.up * (maxPointYWorld+0.5f);
             text.gameObject.transform.position = Vector3.Lerp(text.gameObject.transform.position, target_pos, 0.1f);
             text.alpha = Mathf.Lerp(text.alpha, 1.0f, alpha_lerp);
         }

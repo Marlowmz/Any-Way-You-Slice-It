@@ -589,7 +589,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!114 &1550034802
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -611,6 +611,8 @@ MonoBehaviour:
   unit: 0
   minPointX: 3.4028235e+38
   maxPointX: -3.4028235e+38
+  maxPointY: -3.4028235e+38
+  showText: 0
 --- !u!60 &1550034804
 PolygonCollider2D:
   m_ObjectHideFlags: 0
