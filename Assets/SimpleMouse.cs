@@ -38,12 +38,15 @@ public class SimpleMouse : MonoBehaviour
 
                 if (rb.bodyType == RigidbodyType2D.Dynamic)
                 {
-                    Debug.Log("Kinematic Rigidbody2D found on object");
                     Grab(hit);
                 }
                 else
                 {
-                    if (hit.collider.GetComponent<ClickEventEmitter>() != null)
+
+                    if(hit.collider.tag == "Ingredient"){
+                        Grab(hit);
+                    }
+                    else if (hit.collider.GetComponent<ClickEventEmitter>() != null)
                     {
                         Debug.Log("ClickEventEmitter found on object");
                         hit.collider.GetComponent<ClickEventEmitter>().Click();
@@ -86,6 +89,7 @@ public class SimpleMouse : MonoBehaviour
             //zero out forces
             // draggedObject.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
             // draggedObject.GetComponent<Rigidbody2D>().angularVelocity = 0;
+            draggedObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
             draggedObject = null;
         }
     }

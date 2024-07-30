@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Security.Cryptography;
 
 public class Ingredient : MonoBehaviour
 {
@@ -18,6 +19,10 @@ public class Ingredient : MonoBehaviour
     public float maxPointX = float.MinValue;
 
     private void Awake() {
+
+        if(rb == null) rb = GetComponent<Rigidbody2D>();
+        if(polyCollider == null) polyCollider = GetComponent<PolygonCollider2D>();
+        if(render == null) render = GetComponent<Renderer>();
         Vector2[] points = polyCollider.GetPath(0);
         for (int i = 0; i < points.Length; i++)
         {
