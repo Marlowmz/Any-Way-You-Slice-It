@@ -152,7 +152,7 @@ public class SliceManager : MonoBehaviour
             {
                 //slow down rotation
                 c.angularVelocity *= 0.9f;
-                c.rotation = Mathf.Lerp(c.rotation, 0, 0.1f);
+                c.rotation *= 0.9f;
             }
             //if it's moving, slow it down
             if (c.velocity.magnitude > 0.1f)
