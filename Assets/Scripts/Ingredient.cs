@@ -30,6 +30,7 @@ public class Ingredient : MonoBehaviour
     }
 
     void UpdateMaxY() {
+        maxPointY = float.MinValue;
         Vector2[] points = polyCollider.GetPath(0);
         for (int i = 0; i < points.Length; i++)
         {
@@ -61,20 +62,24 @@ public class Ingredient : MonoBehaviour
         text.text = gameObject.name;
         float offset = (visibleVector.y - (1.0f-visibleVector.x));
         text.rectTransform.sizeDelta = new Vector2(render.bounds.size.x*Mathf.Abs(visibleVector.y - visibleVector.x), text.rectTransform.sizeDelta.y);
-        // text.gameObject.transform.position = transform.position + new Vector3(render.bounds.extents.x*offset, render.bounds.extents.y, 0);
+        float maxPointYWorld = transform.lossyScale.y * maxPointY;
+        text.gameObject.transform.position = transform.position + transform.up * maxPointYWorld + new Vector3(render.bounds.extents.x*offset, render.bounds.extents.y, 0);
         UpdateMaxY();
     }
 
     private void Update() {
+        
+        float alpha_lerp = Time.deltaTime * 5.0f;
 
         if (showText) {
             float offset = (visibleVector.y - (1.0f-visibleVector.x));
-            float maxPointYWorld = transform.TransformPoint(new Vector3(0, maxPointY, 0)).y;
-            text.gameObject.transform.position = transform.position + transform.up * maxPointYWorld + new Vector3(render.bounds.extents.x*offset, render.bounds.extents.y, 0);
-            text.alpha = Mathf.Lerp(text.alpha, 1.0f, 0.1f);
+            float maxPointYWorld = transform.lossyScale.y * maxPointY;
+            Vector3 target_pos = transform.position + transform.up * maxPointYWorld + new Vector3(render.bounds.extents.x*offset, render.bounds.extents.y, 0);
+            text.gameObject.transform.position = Vector3.Lerp(text.gameObject.transform.position, target_pos, 0.1f);
+            text.alpha = Mathf.Lerp(text.alpha, 1.0f, alpha_lerp);
         }
         else {
-            text.alpha = Mathf.Lerp(text.alpha, 0.0f, 0.1f);
+            text.alpha = Mathf.Lerp(text.alpha, 0.0f, alpha_lerp);
         }
 
     }
