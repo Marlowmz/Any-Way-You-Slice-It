@@ -6,11 +6,12 @@ Shader "Unlit/cut_preview"
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags { "RenderType"="Transparent" }
         LOD 100
 
         Pass
         {
+            Blend SrcAlpha OneMinusSrcAlpha // Traditional transparency
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -18,6 +19,8 @@ Shader "Unlit/cut_preview"
             #pragma multi_compile_fog
 
             #include "UnityCG.cginc"
+
+            
 
             struct appdata
             {
@@ -55,6 +58,8 @@ Shader "Unlit/cut_preview"
                 UNITY_APPLY_FOG(i.fogCoord, col);
 
                 if (col.a < 0.1) discard;
+                
+                col.a *= pow(min(1.0-i.uv.y, i.uv.y) + 0.5f, 10.0f);
 
                 return col;
             }
