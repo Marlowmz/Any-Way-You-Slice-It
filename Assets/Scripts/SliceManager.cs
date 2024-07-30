@@ -111,7 +111,11 @@ public class SliceManager : MonoBehaviour
         newIngredient.name = newIngredient.name.Substring(0, trueCharacterPosition);
 
         i.RefreshText();
-        newIngredient.RefreshText();
+        newIngredient.text = null;
+        newIngredient.CreateText();
+
+        i.showText = true;
+        newIngredient.showText = true;
     }
 
     private void Update() {
@@ -136,16 +140,50 @@ public class SliceManager : MonoBehaviour
             {
                 if (!hovered_ingredient) {
                     hovered_ingredient = hit.collider.GetComponent<Ingredient>();
+                    hovered_ingredient.showText = true;
+                } else if (hovered_ingredient.gameObject != hit.collider.gameObject) {
+                    hovered_ingredient.showText = false;
+                    hovered_ingredient = hit.collider.GetComponent<Ingredient>();
+                    hovered_ingredient.showText = true;
                 }
                 else {
                     mousePos.z = 0;
-                    preview_sprite.transform.position = Vector3.Lerp(preview_sprite.transform.position, mousePos, 0.1f);
+                    float total_width = MathF.Abs(hovered_ingredient.maxPointX - hovered_ingredient.minPointX) * MathF.Abs(hovered_ingredient.visibleVector.y - hovered_ingredient.visibleVector.x);
+                    Vector3 start_pos_local = new Vector3(hovered_ingredient.minPointX +(MathF.Abs(hovered_ingredient.maxPointX - hovered_ingredient.minPointX) * hovered_ingredient.visibleVector.x), 0, 0);
+                    Vector3 start_pos_world = hovered_ingredient.transform.TransformPoint(start_pos_local);
+                    float mouse_diff = mousePos.x - start_pos_world.x;
+                    int name_length = hovered_ingredient.name.Length;
+
+                    float world_unit_x = total_width / name_length / 2.0f;
+                    // round mouse to nearest character position
+                    int character_position = Mathf.RoundToInt(mouse_diff / world_unit_x);
+                    Debug.Log(character_position);
+                    // no edge case
+                    if (character_position <= 0 || character_position == name_length) {
+                        return;
+                    }
+                    float character_position_world = character_position * world_unit_x;
+                    
+                    Vector3 preview_pos_world = new Vector3(start_pos_world.x + character_position_world, start_pos_world.y, start_pos_world.z);
+                    
+                    preview_sprite.transform.position = Vector3.Lerp(preview_sprite.transform.position, preview_pos_world, 0.1f);
                     preview_sprite.gameObject.SetActive(true);
+
+                    // draw debug line at each character position
+                    for (int i = 0; i < name_length; i++) {
+                        Vector3 character_pos_world = new Vector3(start_pos_world.x + i * world_unit_x, start_pos_world.y, start_pos_world.z);
+                        Debug.DrawLine(character_pos_world, character_pos_world + new Vector3(0, 1, 0), Color.green, 0.01f);
+                    }
+                    // draw debug line at start pos world
+                    Debug.DrawLine(start_pos_world, start_pos_world + new Vector3(0, 1, 0), Color.red, 0.01f);
                 }
             }
         }     
         else {
-            hovered_ingredient = null;
+            if (hovered_ingredient) {
+                hovered_ingredient.showText = false;
+                hovered_ingredient = null;
+            }
             preview_sprite.gameObject.SetActive(false);
         }  
     }
