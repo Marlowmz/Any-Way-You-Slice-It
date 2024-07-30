@@ -1,7 +1,4 @@
 
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class SimpleMouse : MonoBehaviour
@@ -70,10 +67,9 @@ public class SimpleMouse : MonoBehaviour
         if (draggedObject != null)
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
+            Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y) - (Vector2)draggedObject.transform.TransformVector(localOffset);
             Vector2 attractionVector = mousePos2D - (Vector2)draggedObject.transform.position;
             draggedObject.GetComponent<Rigidbody2D>().velocity = attractionVector * 10;
-            // draggedObject.transform.position = mousePos2D - (Vector2)draggedObject.transform.TransformVector(localOffset);
         }
     }
     void Grab(RaycastHit2D hit)
