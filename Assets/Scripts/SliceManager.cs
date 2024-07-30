@@ -4,12 +4,28 @@ using Unity.VisualScripting;
 using UnityEngine;
 using TMPro;
 using System;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 public class SliceManager : MonoBehaviour
-{   
+{
     [SerializeField]
     SpriteRenderer preview_sprite;
     Ingredient hovered_ingredient;
+
+    [SerializeField]
+    private TriggerEventEmitter triggerEnterArea;
+
+    [SerializeField]
+    private TriggerEventEmitter triggerExitArea;
+
+    private List<Rigidbody2D> colliders = new List<Rigidbody2D>();
+    void Start()
+    {
+        triggerEnterArea.onTriggerEnter.AddListener(IngredientEntered);
+        triggerExitArea.onTriggerExit.AddListener(IngredientExited);
+    }
+
+
 
     void SlicePoly(Ingredient ing, float min, float max)
     {
@@ -63,16 +79,19 @@ public class SliceManager : MonoBehaviour
         ing.polyCollider.points = newPoints.ToArray();
     }
 
-    
-    void SliceMat (Renderer rend, float min, float max) {
+
+    void SliceMat(Renderer rend, float min, float max)
+    {
         Material mat = rend.material;
         mat.SetVector("_VisibleVector", new Vector4(min, max, 0, 0));
     }
 
-    float GetSlicePosition(Ingredient i, float sliceAt) {
+    float GetSlicePosition(Ingredient i, float sliceAt)
+    {
         // round slice at to a character position
         // this math is definitely rounding wrong
-        if (i.unit == 0) {
+        if (i.unit == 0)
+        {
             i.unit = Mathf.Abs(i.visibleVector.y - i.visibleVector.x) / i.name.Length;
         }
         float unit = i.unit;
@@ -83,7 +102,8 @@ public class SliceManager : MonoBehaviour
     }
 
 
-    void Slice(Ingredient i, float sliceAt) {
+    void Slice(Ingredient i, float sliceAt)
+    {
         sliceAt = GetSlicePosition(i, sliceAt);
 
         // if sliceat is not within ingredient visible bounds, error
@@ -96,7 +116,7 @@ public class SliceManager : MonoBehaviour
         // duplicate the ingredient
         Ingredient newIngredient = Instantiate(i.gameObject).GetComponent<Ingredient>();
         newIngredient.name = i.name;
-        int trueCharacterPosition = Mathf.RoundToInt((sliceAt-i.visibleVector.x) / i.unit);
+        int trueCharacterPosition = Mathf.RoundToInt((sliceAt - i.visibleVector.x) / i.unit);
 
         i.visibleVector.x = sliceAt;
         newIngredient.visibleVector.y = sliceAt;
@@ -113,8 +133,38 @@ public class SliceManager : MonoBehaviour
         i.RefreshText();
         newIngredient.RefreshText();
     }
+    void FixedUpdate()
+    {
+        foreach (Rigidbody2D c in colliders)
+        {
+            //slerp rotation to zero
 
-    private void Update() {
+            if (Mathf.Abs(c.rotation) < 0.05 && Mathf.Abs(c.angularVelocity) != 0f)
+            { //if it has gotten sufficiently close to zero and is still spinning, stop it
+                c.angularVelocity = 0;
+                c.rotation = 0;
+            }
+            else
+            {
+                //slow down rotation
+                c.angularVelocity *= 0.9f;
+                c.rotation = Mathf.Lerp(c.rotation, 0, 0.1f);
+            }
+            //if it's moving, slow it down
+            if (c.velocity.magnitude > 0.1f)
+            {
+                c.velocity *= 0.5f;
+            }
+            else
+            {
+                //if it's moving slightly, stop it
+                if (c.velocity.magnitude != 0) c.velocity = Vector2.zero;
+            }
+        }
+    }
+
+    private void Update()
+    {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
         RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
@@ -124,7 +174,8 @@ public class SliceManager : MonoBehaviour
             if (Input.GetMouseButtonDown(1))
             {
                 Ingredient found_ingredient = hit.collider.GetComponent<Ingredient>();
-                if (found_ingredient != null) {
+                if (found_ingredient != null)
+                {
                     {
                         Vector3 localSpace = found_ingredient.transform.InverseTransformPoint(mousePos2D);
                         float sliceAt = Mathf.InverseLerp(found_ingredient.minPointX, found_ingredient.maxPointX, localSpace.x);
@@ -134,22 +185,65 @@ public class SliceManager : MonoBehaviour
             }
             else if (hit.transform.tag == "Ingredient")
             {
-                if (!hovered_ingredient) {
+                if (!hovered_ingredient)
+                {
                     hovered_ingredient = hit.collider.GetComponent<Ingredient>();
                 }
-                else {
+                else
+                {
                     mousePos.z = 0;
                     preview_sprite.transform.position = Vector3.Lerp(preview_sprite.transform.position, mousePos, 0.1f);
                     preview_sprite.gameObject.SetActive(true);
                 }
             }
-        }     
-        else {
+        }
+        else
+        {
             hovered_ingredient = null;
             preview_sprite.gameObject.SetActive(false);
-        }  
+        }
     }
 
+    private void IngredientEntered(Collider2D c)
+    {
+        Debug.Log("Ingredient entered");
+        Rigidbody2D rb = c.GetComponent<Rigidbody2D>();
+        if (rb == null)
+        {
+            Debug.Log("No Rigidbody2D found on object");
+            return;
+        }
 
+        //make kinematic, rotate to zero
+        rb.bodyType = RigidbodyType2D.Kinematic;
+        rb.gravityScale = 0;
+        c.GetComponent<Ingredient>().inWorkArea = true;
+
+        bool alreadyIn = colliders.Contains(rb);
+        if (alreadyIn)
+        {
+            Debug.Log("Already in colliders");
+            return;
+        }
+        colliders.Add(rb);
+
+    }
+
+    private void IngredientExited(Collider2D c)
+    {
+        Debug.Log("Ingredient exited");
+        Rigidbody2D rb = c.GetComponent<Rigidbody2D>();
+        if (rb == null)
+        {
+            Debug.Log("No Rigidbody2D found on object");
+            return;
+        }
+        c.GetComponent<Ingredient>().inWorkArea = false;
+        //make dynamic
+        rb.bodyType = RigidbodyType2D.Dynamic;
+        rb.gravityScale = 1;
+        colliders.Remove(rb);
+        Debug.Log(colliders.Count);
+    }
 
 }

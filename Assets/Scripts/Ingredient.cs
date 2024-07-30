@@ -17,7 +17,7 @@ public class Ingredient : MonoBehaviour
     public float unit;
     public float minPointX = float.MaxValue;
     public float maxPointX = float.MinValue;
-
+    public bool inWorkArea = false;
     private void Awake() {
 
         if(rb == null) rb = GetComponent<Rigidbody2D>();

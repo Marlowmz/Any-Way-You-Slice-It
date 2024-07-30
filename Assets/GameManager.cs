@@ -14,8 +14,9 @@ public class GameManager : MonoBehaviour
 {
     // Start is called before the first frame update
     private List<String> orders = new List<String>();
-    private string[] possibleOrders = {"burger", "fries", "drink"};
+    private string[] possibleOrders = {"burger", "fries", "drink","pancake","cupcake","salad","mash","sausage"};
     private List<String> completedOrders = new List<String>();
+    
     [SerializeField]
     private TextMeshProUGUI orderText;
     void Start()

@@ -43,7 +43,8 @@ public class SimpleMouse : MonoBehaviour
                 else
                 {
 
-                    if(hit.collider.tag == "Ingredient"){
+                    if (hit.collider.tag == "Ingredient")
+                    {
                         Grab(hit);
                     }
                     else if (hit.collider.GetComponent<ClickEventEmitter>() != null)
@@ -88,8 +89,19 @@ public class SimpleMouse : MonoBehaviour
             // draggedObject.GetComponent<Rigidbody2D>().simulated = true;
             //zero out forces
             // draggedObject.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-            // draggedObject.GetComponent<Rigidbody2D>().angularVelocity = 0;
-            draggedObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+            // draggedObject.GetComponent<Rigidbody2D>().angularVelocity = 0;\
+            Ingredient ingredient = draggedObject.GetComponent<Ingredient>();
+            bool handledByWorkArea = false;
+            if (ingredient != null)
+            {
+                if (ingredient.inWorkArea)
+                {
+                    handledByWorkArea = true;
+                }
+            }
+
+            //don't step on the toes of the work area
+            if (!handledByWorkArea) draggedObject.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
             draggedObject = null;
         }
     }
