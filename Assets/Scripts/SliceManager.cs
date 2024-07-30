@@ -138,6 +138,7 @@ public class SliceManager : MonoBehaviour
                     hovered_ingredient = hit.collider.GetComponent<Ingredient>();
                 }
                 else {
+                    mousePos.z = 0;
                     preview_sprite.transform.position = Vector3.Lerp(preview_sprite.transform.position, mousePos, 0.1f);
                     preview_sprite.gameObject.SetActive(true);
                 }
