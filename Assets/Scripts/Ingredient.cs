@@ -11,6 +11,8 @@ public class Ingredient : MonoBehaviour
     public Renderer render;
 
     public Vector2 visibleVector = new Vector2(0, 1);
+    public Vector2 edgeMarginAdditive = new Vector2(0.0f, 0.0f);
+    Vector2 edgeMarginAdditiveOld = new Vector2(0.0f, 0.0f);
 
     public TextMeshPro text;
     public GameObject textPrefab;
@@ -42,8 +44,8 @@ public class Ingredient : MonoBehaviour
         }
     }
     public bool inWorkArea = false;
-    private void Awake() {
 
+    void Init() {
         if(rb == null) rb = GetComponent<Rigidbody2D>();
         if(polyCollider == null) polyCollider = GetComponent<PolygonCollider2D>();
         if(render == null) render = GetComponent<Renderer>();
@@ -59,8 +61,16 @@ public class Ingredient : MonoBehaviour
                 maxPointX = points[i].x;
             }
         }
+
+        // minPointX -= edgeMarginAdditive.x;
+        // maxPointX += edgeMarginAdditive.y;
+
         UpdateMaxY();
         CreateText();
+    }
+
+    private void Awake() {
+        Init();
     }
 
     public void RefreshText() {
@@ -70,13 +80,21 @@ public class Ingredient : MonoBehaviour
         // using visible vector, find center of visible part
         float center = visibleVector.x + (visibleVector.y - visibleVector.x) / 2.0f;
         float centerLocal = Mathf.Lerp(minPointX, maxPointX, center);
-        text.gameObject.transform.position = transform.TransformPoint(new Vector3(centerLocal, 0, 0)) + Vector3.up * (maxPointYWorld+0.5f);;
+        text.gameObject.transform.position = transform.TransformPoint(new Vector3(centerLocal, 0, 0)) + Vector3.up * (maxPointYWorld+0.5f);
+
+        // text.fontSize = render.bounds.size.x / gameObject.name.Length * 8.0f;
+
         UpdateMaxY();
     }
 
     private void Update() {
-        
         float alpha_lerp = Time.deltaTime * 5.0f;
+        if (edgeMarginAdditive != edgeMarginAdditiveOld) {
+            edgeMarginAdditiveOld = edgeMarginAdditive;
+            Debug.DrawLine(transform.TransformPoint(new Vector3(minPointX, 0, 0)), transform.TransformPoint(new Vector3(minPointX, 0, 0)) + Vector3.up * 5, Color.red);
+            Debug.DrawLine(transform.TransformPoint(new Vector3(maxPointX, 0, 0)), transform.TransformPoint(new Vector3(maxPointX, 0, 0)) + Vector3.up * 5, Color.red);
+            Init();
+        }
 
         if (showText) {
             float maxPointYWorld = transform.lossyScale.y * maxPointY;

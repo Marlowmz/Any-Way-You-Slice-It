@@ -606,6 +606,7 @@ MonoBehaviour:
   polyCollider: {fileID: 1550034804}
   render: {fileID: 1550034796}
   visibleVector: {x: 0, y: 1}
+  edgeMarginAdditive: {x: -2, y: 0}
   text: {fileID: 0}
   textPrefab: {fileID: 4138840220854281669, guid: 4d6283ae595759045b561fba71c54a1a, type: 3}
   unit: 0
@@ -613,6 +614,7 @@ MonoBehaviour:
   maxPointX: -3.4028235e+38
   maxPointY: -3.4028235e+38
   showText: 0
+  inWorkArea: 0
 --- !u!60 &1550034804
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -733,6 +735,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   preview_sprite: {fileID: 151691699}
+  triggerEnterArea: {fileID: 0}
+  triggerExitArea: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

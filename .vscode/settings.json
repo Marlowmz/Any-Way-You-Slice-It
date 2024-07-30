@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "any_way_you_slice_it.sln"
+    "dotnet.defaultSolution": "Any-Way-You-Slice-It.sln"
 }
