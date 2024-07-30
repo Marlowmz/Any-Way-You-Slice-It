@@ -231,19 +231,12 @@ public class SliceManager : MonoBehaviour
                     Debug.DrawLine(start_pos_world, start_pos_world + new Vector3(0, 1, 0), Color.red, 0.01f);
                 }
             }
-<<<<<<< HEAD
-        }
-        else
-        {
-            hovered_ingredient = null;
-=======
         }     
         else {
             if (hovered_ingredient) {
                 hovered_ingredient.showText = false;
                 hovered_ingredient = null;
             }
->>>>>>> ec050cbaf8cd50e689da01990e27d57b5fa881d3
             preview_sprite.gameObject.SetActive(false);
         }
     }
