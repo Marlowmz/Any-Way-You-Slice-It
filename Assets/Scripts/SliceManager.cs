@@ -36,8 +36,8 @@ public class SliceManager : MonoBehaviour
         // draw lines at min and max
         Vector3 minWorldSpace = transform.TransformPoint(new Vector3(min, 0, 0));
         Vector3 maxWorldSpace = transform.TransformPoint(new Vector3(max, 0, 0));
-        Debug.DrawLine(minWorldSpace, minWorldSpace + new Vector3(0, 1, 0), Color.red, 10);
-        Debug.DrawLine(maxWorldSpace, maxWorldSpace + new Vector3(0, 1, 0), Color.red, 10);
+        Debug.DrawLine(minWorldSpace, minWorldSpace + new Vector3(0, 1, 0), Color.blue, 10);
+        Debug.DrawLine(maxWorldSpace, maxWorldSpace + new Vector3(0, 1, 0), Color.blue, 10);
 
         Vector2[] originalPoints = ing.polyCollider.points;
         List<Vector2> newPoints = new List<Vector2>();
@@ -114,7 +114,7 @@ public class SliceManager : MonoBehaviour
         }
 
         // duplicate the ingredient
-        Ingredient newIngredient = Instantiate(i.gameObject).GetComponent<Ingredient>();
+        Ingredient newIngredient = Instantiate(i.gameObject, i.gameObject.transform.parent).GetComponent<Ingredient>();
         newIngredient.name = i.name;
         int trueCharacterPosition = Mathf.RoundToInt((sliceAt - i.visibleVector.x) / i.unit);
 
@@ -175,13 +175,14 @@ public class SliceManager : MonoBehaviour
 
         if (hit.collider != null)
         {
+
             if (Input.GetMouseButtonDown(1))
             {
                 Ingredient found_ingredient = hit.collider.GetComponent<Ingredient>();
                 if (found_ingredient != null)
                 {
                     {
-                        Vector3 localSpace = found_ingredient.transform.InverseTransformPoint(mousePos2D);
+                        Vector3 localSpace = found_ingredient.transform.InverseTransformPoint(mousePos);
                         float sliceAt = Mathf.InverseLerp(found_ingredient.minPointX, found_ingredient.maxPointX, localSpace.x);
                         Slice(found_ingredient, sliceAt);
                     }
@@ -201,13 +202,13 @@ public class SliceManager : MonoBehaviour
                 else
                 {
                     mousePos.z = 0;
-                    float total_width = MathF.Abs(hovered_ingredient.maxPointX - hovered_ingredient.minPointX) * MathF.Abs(hovered_ingredient.visibleVector.y - hovered_ingredient.visibleVector.x);
+                    float total_width = MathF.Abs(hovered_ingredient.maxPointX - hovered_ingredient.minPointX) * MathF.Abs(hovered_ingredient.visibleVector.y - hovered_ingredient.visibleVector.x) * hovered_ingredient.transform.lossyScale.x;
                     Vector3 start_pos_local = new Vector3(hovered_ingredient.minPointX +(MathF.Abs(hovered_ingredient.maxPointX - hovered_ingredient.minPointX) * hovered_ingredient.visibleVector.x), 0, 0);
                     Vector3 start_pos_world = hovered_ingredient.transform.TransformPoint(start_pos_local);
                     float mouse_diff = mousePos.x - start_pos_world.x;
                     int name_length = hovered_ingredient.name.Length;
 
-                    float world_unit_x = total_width / name_length / 2.0f;
+                    float world_unit_x = total_width / name_length;
                     // round mouse to nearest character position
                     int character_position = Mathf.RoundToInt(mouse_diff / world_unit_x);
                     Debug.Log(character_position);
