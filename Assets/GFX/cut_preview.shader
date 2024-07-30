@@ -59,10 +59,7 @@ Shader "Unlit/cut_preview"
 
                 if (col.a < 0.1) discard;
                 
-                // mult uv from center
-
                 col.a *= pow(min(1.0-i.uv.y, i.uv.y) + 0.5f, 10.0f);
-
 
                 return col;
             }
