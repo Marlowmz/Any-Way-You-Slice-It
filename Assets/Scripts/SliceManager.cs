@@ -111,7 +111,11 @@ public class SliceManager : MonoBehaviour
         newIngredient.name = newIngredient.name.Substring(0, trueCharacterPosition);
 
         i.RefreshText();
-        newIngredient.RefreshText();
+        newIngredient.text = null;
+        newIngredient.CreateText();
+
+        i.showText = true;
+        newIngredient.showText = true;
     }
 
     private void Update() {
@@ -136,6 +140,11 @@ public class SliceManager : MonoBehaviour
             {
                 if (!hovered_ingredient) {
                     hovered_ingredient = hit.collider.GetComponent<Ingredient>();
+                    hovered_ingredient.showText = true;
+                } else if (hovered_ingredient.gameObject != hit.collider.gameObject) {
+                    hovered_ingredient.showText = false;
+                    hovered_ingredient = hit.collider.GetComponent<Ingredient>();
+                    hovered_ingredient.showText = true;
                 }
                 else {
                     mousePos.z = 0;
@@ -150,7 +159,7 @@ public class SliceManager : MonoBehaviour
                     int character_position = Mathf.RoundToInt(mouse_diff / world_unit_x);
                     Debug.Log(character_position);
                     // no edge case
-                    if (character_position == 0 || character_position == name_length) {
+                    if (character_position <= 0 || character_position == name_length) {
                         return;
                     }
                     float character_position_world = character_position * world_unit_x;
@@ -171,7 +180,10 @@ public class SliceManager : MonoBehaviour
             }
         }     
         else {
-            hovered_ingredient = null;
+            if (hovered_ingredient) {
+                hovered_ingredient.showText = false;
+                hovered_ingredient = null;
+            }
             preview_sprite.gameObject.SetActive(false);
         }  
     }
