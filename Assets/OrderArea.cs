@@ -1,17 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class OrderArea : MonoBehaviour
 {
     [SerializeField]
     private GameManager gameManager;
+
+    [SerializeField]
+    private TextMeshProUGUI orderText;
     private List<GameObject> heldItems = new List<GameObject>();
     //TODO don't stash game objects, stash the actual data
 
     private string BuildString()
     {
         string result = "";
+
         foreach (GameObject item in heldItems)
         {
             //TODO parse the actual string from the Item object's fields
@@ -26,6 +31,7 @@ public class OrderArea : MonoBehaviour
         {
             heldItems.Add(other.gameObject);
             Debug.Log("Added " + other.gameObject.name);
+            UpdateRecipe();
         }
     }
 
@@ -35,7 +41,13 @@ public class OrderArea : MonoBehaviour
         {
             Debug.Log("Added " + other.gameObject.name);
             heldItems.Remove(other.gameObject);
+            UpdateRecipe();
+
         }
+    }
+    public void UpdateRecipe()
+    {
+        orderText.text = BuildString();
     }
 
     public void SubmitOrder()
@@ -46,12 +58,13 @@ public class OrderArea : MonoBehaviour
     }
     void Start()
     {
-        
+        orderText.text = "";
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }
